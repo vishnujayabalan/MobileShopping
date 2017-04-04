@@ -1,0 +1,76 @@
+package com.niit.frontend;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.niit.backend.dao.ProductDAO;
+import com.niit.backend.model.Category;
+
+@Controller
+public class CategoryController {
+	
+	//Category.jsp  - addCategory, deleteCategory, showCategoryList,updateCategory,editCategory
+	
+	@Autowired
+	private ProductDAO productDAO;
+	
+	@Autowired
+	private Category product;
+	
+	
+	
+	//CURD Operations	
+	
+	
+	@PostMapping("/manage_category_create")
+	public ModelAndView createCategory(@RequestParam("id")String id, 
+			@RequestParam("name")String name, @RequestParam("description")String description)
+	{
+		
+		product.setid(id);
+		product.setName(name);
+		product.setDescription(description);
+		productDAO.save(product);
+		ModelAndView mv = new ModelAndView("redirect:/clickcate");
+		
+		
+		
+		return mv;
+		
+	}
+	@GetMapping("/manage_category_delete/{id}")
+	public ModelAndView deleteCategory(@PathVariable("id") String id)
+	{
+		ModelAndView mv = new ModelAndView("forward:/clickcate");
+		
+		if(productDAO.delete(id))
+		{
+			mv.addObject("message", "Successfully delete the product");
+		}
+		else
+		{
+			mv.addObject("message", "Note able delete the product pl contact administrator");
+		}
+		return mv;
+		
+		
+	}
+	@PostMapping("manage_category_edit")
+	public String editCategory(@RequestParam("id")String id, 
+			@RequestParam("name")String name, @RequestParam("description")String description ) {
+		product.setid(id);
+		product.setName(name);
+		product.setDescription(description);
+		 productDAO.update(product);		
+		return "redirect:/clickcate";
+	}
+}
